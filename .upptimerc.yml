@@ -35,5 +35,12 @@ commitMessages:
   commitAuthorEmail: 73812536+upptime-bot@users.noreply.github.com
   readmeContent: 'docs(readme): update uptime summary [skip ci] [upptime]'
   summaryJson: 'chore(api): update status summary [skip ci] [upptime]'
-  statusChange: 'chore(status): $SITE_NAME is $STATUS ($RESPONSE_CODE in $RESPONSE_TIME ms) [skip ci] [upptime]'
+  statusChange: '$PREFIX $SITE_NAME is $STATUS ($RESPONSE_CODE in $RESPONSE_TIME ms) [skip ci] [upptime]'
   graphsUpdate: 'chore(graphs): update response-time graphs [skip ci] [upptime]'
+
+# $PREFIX in statusChange resolves to one of these. The summary generator reads the
+# FIRST WORD of the latest commit on each history file to decide up/down/degraded
+# (uptime-monitor calculate-response-time.ts), so each prefix must be one distinct token.
+commitPrefixStatusUp: 'chore(status-up):'
+commitPrefixStatusDown: 'chore(status-down):'
+commitPrefixStatusDegraded: 'chore(status-degraded):'
