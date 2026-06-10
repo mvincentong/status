@@ -22,3 +22,14 @@ status-website:
 # Downtime alerts are GitHub issues in this repo (Upptime default).
 assignees:
   - mvincentong
+
+# Conventional-commit style, no emojis. Keep the "($RESPONSE_CODE in $RESPONSE_TIME ms)"
+# pattern and the [skip ci] [upptime] tags — Upptime parses its own commit messages on
+# history files to compute response-time/uptime stats, and the tags prevent CI loops.
+commitMessages:
+  commitAuthorName: Upptime Bot
+  commitAuthorEmail: 73812536+upptime-bot@users.noreply.github.com
+  readmeContent: 'docs(readme): update uptime summary [skip ci] [upptime]'
+  summaryJson: 'chore(api): update status summary [skip ci] [upptime]'
+  statusChange: 'chore(status): $SITE_NAME is $STATUS ($RESPONSE_CODE in $RESPONSE_TIME ms) [skip ci] [upptime]'
+  graphsUpdate: 'chore(graphs): update response-time graphs [skip ci] [upptime]'
