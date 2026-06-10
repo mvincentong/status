@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Launch a Venture — Status</title>
+  <meta name="description" content="Live status and uptime monitoring for Launch a Venture. Website and API health checked every 5 minutes by GitHub Actions." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fafaf9'/%3E%3Ctext x='2' y='24' font-family='monospace' font-size='22' font-weight='700' fill='%23E40014'%3E%26gt;%3C/text%3E%3Ctext x='17' y='24' font-family='monospace' font-size='22' font-weight='700' fill='%23080503'%3E_%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #080503;
+      --paper: #fafaf9;
+      --accent: #E40014;
+      --up: #0a7d33;
+      --degraded: #b45309;
+      --down: #E40014;
+      --muted: #888888;
+      --border: #e5e2df;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background: var(--paper);
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 28px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .logo .chevron {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .logo .cursor {
+      color: var(--ink);
+      font-weight: 700;
+      animation: blink 1.1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo .cursor {
+        animation: none;
+      }
+    }
+
+    .history-link {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .history-link:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    /* Banner */
+    .banner {
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--muted);
+      padding: 22px 24px;
+      margin-bottom: 36px;
+    }
+
+    .banner.ok { border-left-color: var(--up); }
+    .banner.warn { border-left-color: var(--degraded); }
+    .banner.bad { border-left-color: var(--down); }
+
+    .banner h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+    }
+
+    .banner .sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Cards */
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      padding: 20px 22px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-name {
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .card-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      display: inline-block;
+      background: var(--muted);
+    }
+
+    .status-up .dot { background: var(--up); }
+    .status-up .word { color: var(--up); }
+    .status-degraded .dot { background: var(--degraded); }
+    .status-degraded .word { color: var(--degraded); }
+    .status-down .dot { background: var(--down); }
+    .status-down .word { color: var(--down); }
+
+    .word {
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+    }
+
+    .resp {
+      color: var(--muted);
+    }
+
+    /* Stats row */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 60px;
+    }
+
+    .stat .label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat .value {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* Sparkline */
+    .spark {
+      margin-top: 18px;
+    }
+
+    .spark img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 64px;
+      object-fit: cover;
+      filter: grayscale(0.25) contrast(1.05);
+      opacity: 0.9;
+    }
+
+    /* States */
+    .placeholder {
+      border: 1px solid var(--border);
+      padding: 28px 24px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .placeholder a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .placeholder a:hover {
+      border-color: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    footer a:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    @media (max-width: 520px) {
+      .banner h1 { font-size: 30px; }
+      .stats { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="logo" aria-label="Launch a Venture">
+        <span class="chevron" aria-hidden="true">&gt;</span>
+        <span class="name">Launch a Venture</span>
+        <span class="cursor" aria-hidden="true">_</span>
+      </div>
+      <a class="history-link" href="https://github.com/mvincentong/status/issues?q=label%3Astatus" target="_blank" rel="noopener">history</a>
+    </header>
+
+    <section id="banner" class="banner" aria-live="polite">
+      <h1 id="banner-title">checking systems&hellip;</h1>
+      <div class="sub" id="banner-sub"></div>
+    </section>
+
+    <section class="cards" id="cards" aria-live="polite">
+      <div class="placeholder">checking systems&hellip;</div>
+    </section>
+
+    <footer>
+      <div>
+        <a href="https://github.com/mvincentong/status" target="_blank" rel="noopener">Launch a Venture — monitored every 5 minutes by GitHub Actions</a>
+      </div>
+      <div id="last-updated"></div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var SUMMARY_URL = "https://raw.githubusercontent.com/mvincentong/status/master/history/summary.json";
+      var GRAPH_BASE = "https://raw.githubusercontent.com/mvincentong/status/master/graphs/";
+      var REPO_URL = "https://github.com/mvincentong/status";
+
+      var NAME_MAP = {
+        "LaunchAVenture": "Website",
+        "LaunchAVenture API health": "API"
+      };
+
+      var STATUS_WORD = {
+        up: "operational",
+        degraded: "degraded",
+        down: "down"
+      };
+
+      var cardsEl = document.getElementById("cards");
+      var bannerEl = document.getElementById("banner");
+      var bannerTitle = document.getElementById("banner-title");
+      var bannerSub = document.getElementById("banner-sub");
+      var lastUpdatedEl = document.getElementById("last-updated");
+
+      function esc(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+
+      function displayName(raw) {
+        return NAME_MAP[raw] || raw;
+      }
+
+      function renderBanner(monitors) {
+        var total = monitors.length;
+        var upCount = 0, badCount = 0;
+        monitors.forEach(function (m) {
+          if (m.status === "up") upCount++;
+          else badCount++;
+        });
+
+        var cls, title;
+        if (badCount === 0) {
+          cls = "ok"; title = "All systems operational";
+        } else if (upCount === 0) {
+          cls = "bad"; title = "Major outage";
+        } else {
+          cls = "warn"; title = "Partial outage";
+        }
+
+        bannerEl.className = "banner " + cls;
+        bannerTitle.textContent = title;
+        bannerSub.textContent = upCount + " of " + total + " services operational";
+      }
+
+      function statValue(v) {
+        return (v === undefined || v === null || v === "") ? "—" : v;
+      }
+
+      function renderCard(m) {
+        var status = (m.status === "up" || m.status === "degraded" || m.status === "down") ? m.status : "down";
+        var word = STATUS_WORD[status];
+        var name = displayName(m.name);
+        var slug = m.slug || "";
+        var time = (typeof m.time === "number") ? m.time : null;
+
+        var spark = "";
+        if (slug) {
+          var src = GRAPH_BASE + esc(slug) + "/response-time-week.png";
+          spark =
+            '<div class="spark">' +
+              '<img src="' + src + '" alt="' + esc(name) + ' response time over the past week" loading="lazy" onerror="this.parentNode.style.display=\'none\'" />' +
+            '</div>';
+        }
+
+        return '' +
+          '<article class="card status-' + status + '">' +
+            '<div class="card-head">' +
+              '<span class="card-name">' + esc(name) + '</span>' +
+              '<span class="card-status">' +
+                '<span class="dot" aria-hidden="true"></span>' +
+                '<span class="word">' + esc(word) + '</span>' +
+                (time !== null ? '<span class="resp">· ' + esc(time) + ' ms</span>' : '') +
+              '</span>' +
+            '</div>' +
+            '<div class="stats">' +
+              '<div class="stat"><span class="label">24h</span><span class="value">' + esc(statValue(m.uptimeDay)) + '</span></div>' +
+              '<div class="stat"><span class="label">7d</span><span class="value">' + esc(statValue(m.uptimeWeek)) + '</span></div>' +
+              '<div class="stat"><span class="label">30d</span><span class="value">' + esc(statValue(m.uptimeMonth)) + '</span></div>' +
+              '<div class="stat"><span class="label">all-time</span><span class="value">' + esc(statValue(m.uptime)) + '</span></div>' +
+            '</div>' +
+            spark +
+          '</article>';
+      }
+
+      function renderError() {
+        bannerEl.className = "banner";
+        bannerTitle.textContent = "status data unavailable";
+        bannerSub.textContent = "";
+        cardsEl.innerHTML =
+          '<div class="placeholder">status data unavailable — ' +
+          'view the <a href="' + REPO_URL + '" target="_blank" rel="noopener">GitHub repository</a>.</div>';
+      }
+
+      function formatTimestamp(d) {
+        try {
+          return d.toLocaleString(undefined, {
+            year: "numeric", month: "short", day: "numeric",
+            hour: "2-digit", minute: "2-digit"
+          });
+        } catch (e) {
+          return d.toString();
+        }
+      }
+
+      function load() {
+        fetch(SUMMARY_URL, { cache: "no-store" })
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            if (!Array.isArray(data) || data.length === 0) throw new Error("empty");
+            renderBanner(data);
+            cardsEl.innerHTML = data.map(renderCard).join("");
+            lastUpdatedEl.textContent = "last updated " + formatTimestamp(new Date());
+          })
+          .catch(function (err) {
+            renderError();
+            lastUpdatedEl.textContent = "last checked " + formatTimestamp(new Date());
+          });
+      }
+
+      load();
+      setInterval(load, 60000);
+    })();
+  </script>
+</body>
+</html>
