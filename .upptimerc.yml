@@ -9,7 +9,7 @@ sites:
     url: https://launchaventure.com/healthz
 
 status-website:
-  cname: status.launchaventure.com
+  baseUrl: /status
   name: LaunchAVenture Status
   introTitle: '**LaunchAVenture** service status'
   introMessage: Live uptime and response-time history for [launchaventure.com](https://launchaventure.com).
