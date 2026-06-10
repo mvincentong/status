@@ -5,8 +5,12 @@ repo: status
 sites:
   - name: LaunchAVenture
     url: https://launchaventure.com
+    headers:
+      - 'User-Agent: Upptime/1.0 (+https://github.com/mvincentong/status)'
   - name: LaunchAVenture API health
     url: https://launchaventure.com/healthz
+    headers:
+      - 'User-Agent: Upptime/1.0 (+https://github.com/mvincentong/status)'
 
 status-website:
   baseUrl: /status
